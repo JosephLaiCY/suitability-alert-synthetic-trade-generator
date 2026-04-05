@@ -1,0 +1,33 @@
+[project]
+name = "synthetic-trade-alert-generator"
+version = "0.1.0"
+
+description = """This project generates a realistic synthetic dataset of private-banking trades and suitability alerts, focused on **Mis-selling and Conduct Risk**. It simulates:
+
+- **Advisors** (including a small set of "bad apples" with specific risk typologies).
+- **Clients** with different risk profiles, knowledge & experience, liquidity needs, and investment goals.
+- **Products** with varying risk levels, commission structures, and liquidity characteristics.
+- **Trades** that may or may not breach mechanical suitability rules.
+
+The goal is to produce an ML-ready dataset with:
+
+- **`is_alert`**: whether the trade breaches any hard suitability rule.
+- **Per-rule flags** (e.g. K&E mismatch, concentration, risk, horizon, goal).
+- **`is_genuine`**: whether the alert corresponds to a genuine conduct issue driven by bad-apple behaviour."""
+
+readme = "README.md"
+
+requires-python = ">=3.12"
+
+dependencies = [
+    "numpy",
+    "pandas",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
