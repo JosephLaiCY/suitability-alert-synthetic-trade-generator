@@ -84,29 +84,28 @@ erDiagram
 pip install -r requirements.txt
 ```
 
-## Running the MVP with marimo
+## Generating the Dataset
 
-This project uses a **marimo notebook** to orchestrate the data-generation pipeline.
-
-1. Launch marimo in this project directory (for example):
+Run the pipeline from the project root:
 
 ```bash
-marimo edit notebooks/generate_synthetic_trades.py
+python main.py
 ```
 
-2. In the marimo UI:
+This generates all entities, applies suitability rules, and writes four CSV files to `output/`:
 
-- Run the **config cell** to load and optionally tweak parameters from `config/config.json`.
-- Run the **generation** and **rules/labeling** cells to build the dataset.
-- Run the **export** cell to write:
-  - `data/trades.csv`
-  - `data/trades.parquet`
+- `output/advisors.csv`
+- `output/clients.csv`
+- `output/products.csv`
+- `output/trade_suitability.csv`
 
-3. Use the **summary/EDA** cells to inspect:
+## Exploring the Data
 
-- Dataset size.
-- Overall alert rate.
-- Genuine vs justifiable mismatch proportions.
+Launch the EDA notebook with marimo:
+
+```bash
+marimo edit notebooks/eda.py
+```
 
 ## Configuration
 
@@ -124,7 +123,7 @@ Core parameters live in `config/config.json`. Key sections:
 | `labeling` | Label-noise rate |
 | `output` | Output directory, filename, CSV/Parquet toggles |
 
-You can safely experiment by changing values in `config/config.json` and re-running the marimo notebook to generate new datasets.
+You can safely experiment by changing values in `config/config.json` and re-running `python main.py` to generate new datasets.
 
 ### Client age distribution
 
@@ -155,6 +154,7 @@ Knowledge & Experience flags are generated from a single flat probability dictio
 
 ### Flow Chart for trade generation
 
+```mermaid
 flowchart TD
     PICK["Pick random client → resolve advisor"]
 
@@ -184,3 +184,4 @@ flowchart TD
     LM_CHECK -- No --> KEEP_LM["typology_applied = Liquidity Mismatch"]
 
     CLEAN_ROW & EXTEND["extend trade_rows with cluster"] & DOWNGRADE_UR & KEEP_UR & DOWNGRADE_MR & KEEP_MR & DOWNGRADE_LM & KEEP_LM --> TRADE["Build trade record\ntrade_id, client_id, advisor_id, product_id\ntrade_date_offset = rand(0–365)\ntrade_amount = AUM × rand(1–25%)\nestimated_comm = amount × commission_rate"]
+```
